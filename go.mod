@@ -1,4 +1,4 @@
-module github.com/zzl/go-com
+module github.com/gerasimovpavel/go-com
 
 go 1.19
 

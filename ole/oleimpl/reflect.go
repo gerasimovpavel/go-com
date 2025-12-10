@@ -6,9 +6,9 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/zzl/go-com/ole"
+	"github.com/gerasimovpavel/go-com/ole"
 
-	"github.com/zzl/go-com/com"
+	"github.com/gerasimovpavel/go-com/com"
 	"github.com/zzl/go-win32api/v2/win32"
 )
 

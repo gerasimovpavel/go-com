@@ -5,8 +5,8 @@ import (
 	"os"
 	"unsafe"
 
-	"github.com/zzl/go-com/com/comimpl"
-	"github.com/zzl/go-com/ole"
+	"github.com/gerasimovpavel/go-com/com/comimpl"
+	"github.com/gerasimovpavel/go-com/ole"
 	"github.com/zzl/go-win32api/v2/win32"
 )
 
