@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 	"unsafe"
 
@@ -983,6 +984,55 @@ func (this *Variant) ToDecimal() (Decimal, error) {
 		}
 	}
 	return Decimal(v.DecValVal()), nil
+}
+
+func (this *Variant) ToGUID() (syscall.GUID, error) {
+	v := this
+	if v == nil {
+		return syscall.GUID{}, com.NewError(win32.DISP_E_BADVARTYPE)
+	}
+	
+	vt := win32.VARENUM(v.Vt)
+	
+	// Обработка VT_BYREF - структура по ссылке
+	if vt&win32.VT_BYREF != 0 {
+		vt &^= win32.VT_BYREF
+		if vt == win32.VT_RECORD || vt == win32.VT_USERDEFINED {
+			// Структура по ссылке - указатель на указатель
+			ppGuid := (**syscall.GUID)(unsafe.Pointer(v.PpunkValVal()))
+			if ppGuid == nil || *ppGuid == nil {
+				return syscall.GUID{}, com.NewError(win32.DISP_E_BADVARTYPE)
+			}
+			return **ppGuid, nil
+		}
+		return syscall.GUID{}, com.NewError(win32.DISP_E_BADVARTYPE)
+	}
+	
+	// Обработка VT_RECORD - структура по указателю
+	if vt == win32.VT_RECORD {
+		pGuid := (*syscall.GUID)(unsafe.Pointer(v.PunkValVal()))
+		if pGuid == nil {
+			return syscall.GUID{}, com.NewError(win32.DISP_E_BADVARTYPE)
+		}
+		return *pGuid, nil
+	}
+	
+	// Обработка VT_USERDEFINED - пользовательский тип
+	if vt == win32.VT_USERDEFINED {
+		pGuid := (*syscall.GUID)(unsafe.Pointer(v.PunkValVal()))
+		if pGuid == nil {
+			return syscall.GUID{}, com.NewError(win32.DISP_E_BADVARTYPE)
+		}
+		return *pGuid, nil
+	}
+	
+	// Попытка через ToPointer для других случаев
+	ptr := this.ToPointer()
+	if ptr != nil {
+		return *(*syscall.GUID)(ptr), nil
+	}
+	
+	return syscall.GUID{}, com.NewError(win32.DISP_E_BADVARTYPE)
 }
 
 //no copy
