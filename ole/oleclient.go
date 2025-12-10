@@ -201,7 +201,7 @@ func SetVariantParam(v *Variant, value interface{}, unwrapActions *Actions) {
 		})
 	case *int8:
 		v.Vt = win32.VT_I1 | win32.VT_BYREF
-		*v.PcVal() = (*win32.CHAR)(unsafe.Pointer(val))
+		*v.PcVal() = (*byte)(unsafe.Pointer(val))
 	case *uint8:
 		v.Vt = win32.VT_UI1 | win32.VT_BYREF
 		*v.PbVal() = val
